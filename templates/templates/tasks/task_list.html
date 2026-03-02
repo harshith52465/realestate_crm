@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #f1f5f9;
+        font-size: 13px;
+        text-transform: uppercase;
+        color: #555;
+    }
+
+    tr:hover {
+        background: #f9fafb;
+    }
+
+    .status-done {
+        color: green;
+        font-weight: 600;
+    }
+
+    .status-pending {
+        color: orange;
+        font-weight: 600;
+    }
+
+    .muted {
+        color: #999;
+    }
+
+    .add-btn {
+        padding: 8px 14px;
+        background: #2563eb;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+
+    .mini-btn {
+        padding: 6px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 12px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #111827;
+        margin-right: 6px;
+        cursor: pointer;
+    }
+</style>
+
+<!-- PAGE HEADER -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+    <h2>Tasks</h2>
+    <a href="{% url 'task-add' %}" class="add-btn">+ Add Task</a>
+</div>
+
+<div class="page-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Lead</th>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Priority</th>
+                <th>Due</th>
+                <th>Status</th>
+                <th>Assigned To</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.lead.name }}</td>
+                <td>{{ task.property.title|default:"-" }}</td>
+                <td>{{ task.task_type|title }}</td>
+                <td>{{ task.priority|title }}</td>
+                <td>{{ task.due_date|date:"Y-m-d H:i" }}</td>
+                <td>{{ task.status|title }}</td>
+                <td>
+                    {% if task.assigned_to %}
+                        {{ task.assigned_to.username }}
+                    {% else %}
+                        <span class="muted">Unassigned</span>
+                    {% endif %}
+                </td>
+                <td>{{ task.note }}</td>
+                <td>
+                    <a class="mini-btn" href="{% url 'task-edit' task.id %}">Edit</a>
+                    <form method="post" action="{% url 'task-delete' task.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button class="mini-btn" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="9">No tasks found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

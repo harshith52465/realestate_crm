@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Add Task{% endblock %}
+
+{% block content %}
+<style>
+    .form-card{background:#fff;padding:25px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1);max-width:800px}
+    .form-group{margin-bottom:15px}
+    label{font-weight:bold;display:block;margin-bottom:5px}
+    input,select,textarea{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc}
+    .btn{padding:10px 15px;border-radius:6px;border:none;cursor:pointer}
+    .btn-save{background:#2563eb;color:#fff}
+</style>
+
+<h2>{% if task %}Edit Task{% else %}Add Task{% endif %}</h2>
+
+<div class="form-card">
+<form method="post">
+{% csrf_token %}
+
+<div class="form-group">
+    <label>Lead</label>
+    <select name="lead_id" required>
+        <option value="">-- Select Lead --</option>
+        {% for l in leads %}
+            <option value="{{ l.id }}" {% if task and task.lead_id == l.id %}selected{% endif %}>{{ l.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Property (optional)</label>
+    <select name="property_id">
+        <option value="">-- Select Property --</option>
+        {% for p in properties %}
+            <option value="{{ p.id }}" {% if task and task.property_id == p.id %}selected{% endif %}>{{ p.title }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+{% if request.user.is_superuser %}
+<div class="form-group">
+    <label>Assign To</label>
+    <select name="assigned_to" required>
+        {% for a in agents %}
+            <option value="{{ a.id }}" {% if task and task.assigned_to_id == a.id %}selected{% endif %}>{{ a.username }}</option>
+        {% endfor %}
+    </select>
+</div>
+{% endif %}
+
+<div class="form-group">
+    <label>Task Type</label>
+    <select name="task_type" required>
+        <option value="call">Call</option>
+        <option value="meeting">Meeting</option>
+        <option value="site_visit">Site Visit</option>
+        <option value="follow_up">Follow Up</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Priority</label>
+    <select name="priority">
+        <option value="low" {% if task and task.priority == "low" %}selected{% endif %}>Low</option>
+        <option value="medium" {% if not task or task.priority == "medium" %}selected{% endif %}>Medium</option>
+        <option value="high" {% if task and task.priority == "high" %}selected{% endif %}>High</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Status</label>
+    <select name="status">
+        <option value="pending" {% if task and task.status == "pending" %}selected{% endif %}>Pending</option>
+        <option value="in_progress" {% if task and task.status == "in_progress" %}selected{% endif %}>In Progress</option>
+        <option value="completed" {% if task and task.status == "completed" %}selected{% endif %}>Completed</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Due Date</label>
+    <input type="datetime-local" name="due_date" value="{% if task %}{{ task.due_date|date:'Y-m-d\\TH:i' }}{% endif %}" required>
+</div>
+
+<div class="form-group">
+    <label>Note</label>
+    <textarea name="note" rows="3">{% if task %}{{ task.note }}{% endif %}</textarea>
+</div>
+
+<button class="btn btn-save" type="submit">{% if task %}Update Task{% else %}Save Task{% endif %}</button>
+</form>
+</div>
+{% endblock %}

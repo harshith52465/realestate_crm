@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Add Lead</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Name</label><br>
+    <input type="text" name="name" required><br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email"><br><br>
+
+    <label>Phone</label><br>
+    <input type="text" name="phone" required><br><br>
+
+    <label>Status</label><br>
+    <select name="status">
+        <option value="fresh">Fresh</option>
+        <option value="returning">Returning</option>
+        <option value="untouched">Untouched</option>
+        <option value="closed">Closed</option>
+    </select><br><br>
+
+    <label>Assign To</label><br>
+    <select name="assigned_to">
+        {% for user in users %}
+            <option value="{{ user.id }}">{{ user.username }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Create Lead</button>
+</form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Social Login Error{% endblock %}
+
+{% block content %}
+<div style="max-width:900px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px;">
+  <h2 style="margin-top:0;">Third-Party Login Failure</h2>
+  <p>An error occurred while attempting to login via your third-party account.</p>
+
+  <div style="margin-top:12px;padding:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+    <div><strong>Provider:</strong> {{ auth_error.provider.id|default:"-" }}</div>
+    <div><strong>Code:</strong> {{ auth_error.code|default:"-" }}</div>
+    <div><strong>Exception:</strong> {{ auth_error.exception|default:"-" }}</div>
+  </div>
+
+  {% if request.GET %}
+  <div style="margin-top:12px;padding:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;">
+    <strong>Query Params:</strong>
+    <pre style="white-space:pre-wrap;margin:8px 0 0;">{{ request.GET.urlencode }}</pre>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

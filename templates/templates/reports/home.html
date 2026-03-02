@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-title {
+        font-family: "Georgia", "Times New Roman", serif;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 14px;
+    }
+
+    .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .field {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 8px 12px;
+        min-width: 150px;
+    }
+
+    .btn {
+        padding: 8px 14px;
+        background: #1d7fe2;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .card h3 {
+        font-size: 13px;
+        color: #6b7280;
+        margin: 0 0 10px;
+        text-transform: uppercase;
+    }
+
+    .card .value {
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .card .delta {
+        color: #16a34a;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 18px;
+        margin-top: 10px;
+    }
+
+    .panel {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid #eef2f7;
+        font-weight: 700;
+    }
+
+    .panel-body {
+        padding: 16px;
+    }
+
+    .line-chart {
+        height: 180px;
+        background: linear-gradient(180deg, #eef2ff, #fff);
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .line-chart svg {
+        position: absolute;
+        inset: 0;
+    }
+
+    .legend {
+        display: flex;
+        gap: 14px;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #6b7280;
+    }
+
+    .legend span::before {
+        content: "";
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 6px;
+        vertical-align: middle;
+    }
+
+    .lg-sales::before { background: #1d7fe2; }
+    .lg-listing::before { background: #9ca3af; }
+
+    .month-grid {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
+        font-size: 11px;
+        color: #64748b;
+        text-align: center;
+    }
+
+    .dist-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .dist-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        font-size: 13px;
+    }
+
+    .dist-label {
+        display: flex;
+        justify-content: space-between;
+        color: #475569;
+        margin-bottom: 4px;
+    }
+
+    .dist-bar {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .dist-fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 10px 8px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    th {
+        text-transform: uppercase;
+        font-size: 11px;
+        color: #6b7280;
+    }
+
+    .status {
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .st-in { background: #fff7ed; color: #c2410c; }
+    .st-complete { background: #ecfdf3; color: #15803d; }
+    .st-pending { background: #fef2f2; color: #b91c1c; }
+
+    @media (max-width: 1100px) {
+        .cards { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+        .grid-2 { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="top-actions">
+    <div class="page-title">Overview</div>
+    <form method="get" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <select class="field" name="period">
+            <option value="today" {% if selected_period == "today" %}selected{% endif %}>Today</option>
+            <option value="7d" {% if selected_period == "7d" %}selected{% endif %}>Last 7 Days</option>
+            <option value="30d" {% if selected_period == "30d" %}selected{% endif %}>Last 30 Days</option>
+        </select>
+        <input class="field" type="date" name="from" value="{{ from_date }}">
+        <input class="field" type="date" name="to" value="{{ to_date }}">
+        <button class="btn" type="submit" style="border:0; cursor:pointer;">Apply</button>
+        <a class="btn" href="{% url 'export-reports' %}{% if query_string %}?{{ query_string }}{% endif %}">Export Report</a>
+    </form>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <h3>Unique Customers</h3>
+        <div class="value">{{ unique_customers }}</div>
+        <div class="delta">Deduplicated by email/phone</div>
+    </div>
+    <div class="card">
+        <h3>Total Enquiries</h3>
+        <div class="value">{{ total_enquiries }}</div>
+        <div class="delta">All property requests</div>
+    </div>
+    <div class="card">
+        <h3>Conversion Rate</h3>
+        <div class="value">{{ conversion_rate }}%</div>
+        <div class="delta">Closed / Enquiries</div>
+    </div>
+    <div class="card">
+        <h3>Total Tasks</h3>
+        <div class="value">{{ total_tasks }}</div>
+        <div class="delta">{{ completed_tasks }} completed, {{ pending_tasks }} pending</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="panel">
+        <div class="panel-header">Property Sales Trend</div>
+        <div class="panel-body">
+            <div class="line-chart">
+                <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                    <polyline points="{{ sales_polyline }}"
+                              fill="none" stroke="#1d7fe2" stroke-width="3"/>
+                    <polyline points="{{ closed_polyline }}"
+                              fill="none" stroke="#9ca3af" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="legend">
+                <span class="lg-sales">Enquiries</span>
+                <span class="lg-listing">Closed</span>
+            </div>
+            <div class="month-grid">
+                {% for row in trend_rows %}
+                <div>{{ row.label }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">Property Distribution</div>
+        <div class="panel-body">
+            <div class="dist-list">
+                {% for item in distribution %}
+                <div class="dist-row">
+                    <div>
+                        <div class="dist-label">
+                            <span>{{ item.label }}</span>
+                            <span>{{ item.percent }}%</span>
+                        </div>
+                        <div class="dist-bar">
+                            <div class="dist-fill" style="width: {{ item.percent }}%; background: {{ item.color }};"></div>
+                        </div>
+                    </div>
+                    <div>{{ item.count }}</div>
+                </div>
+                {% empty %}
+                <div>No property data</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel" style="margin-top:18px;">
+    <div class="panel-header">Recent Transactions</div>
+    <div class="panel-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Customer</th>
+                    <th>Agent</th>
+                    <th>Source</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in recent_transactions %}
+                <tr>
+                    <td>{{ tx.property.title|default:"-" }}</td>
+                    <td>{{ tx.name }}</td>
+                    <td>{{ tx.assigned_to.username|default:"Unassigned" }}</td>
+                    <td>{{ tx.source|default:"-" }}</td>
+                    <td>{{ tx.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if tx.status == "closed" %}
+                        <span class="status st-complete">{{ tx.status|title }}</span>
+                        {% elif tx.status == "fresh" %}
+                        <span class="status st-in">{{ tx.status|title }}</span>
+                        {% else %}
+                        <span class="status st-pending">{{ tx.status|title }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No transactions in selected date range.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+

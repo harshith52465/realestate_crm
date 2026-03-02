@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real Estate CRM</title>
+    <style>
+        body{
+            font-family: Arial;
+            background:#f5f7fb;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+        .card{
+            background:white;
+            padding:30px;
+            border-radius:8px;
+            width:350px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        }
+        input{
+            width:100%;
+            padding:10px;
+            margin:8px 0;
+        }
+        button{
+            width:100%;
+            padding:10px;
+            background:#007bff;
+            color:white;
+            border:none;
+        }
+        a{
+            text-decoration:none;
+            color:#007bff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

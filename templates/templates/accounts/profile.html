@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+
+<style>
+    .profile-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        max-width: 700px;
+    }
+
+    .profile-row {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .profile-row label {
+        width: 180px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .profile-row span {
+        color: #111;
+    }
+
+    .edit-btn {
+        margin-top: 20px;
+        display: inline-block;
+        padding: 10px 15px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+    }
+</style>
+
+<h2>My Profile</h2>
+
+<div class="profile-card">
+
+    <div class="profile-row">
+        <label>Username</label>
+        <span>{{ request.user.username }}</span>
+    </div>
+
+    <div class="profile-row">
+        <label>Email</label>
+        <span>{{ request.user.email }}</span>
+    </div>
+
+    <div class="profile-row">
+        <label>First Name</label>
+        <span>{{ request.user.first_name }}</span>
+    </div>
+
+    <div class="profile-row">
+        <label>Last Name</label>
+        <span>{{ request.user.last_name }}</span>
+    </div>
+
+    {% if profile %}
+    <div class="profile-row">
+        <label>Phone</label>
+        <span>{{ profile.phone }}</span>
+    </div>
+
+    <div class="profile-row">
+        <label>Gender</label>
+        <span>{{ profile.gender }}</span>
+    </div>
+
+    <div class="profile-row">
+        <label>Date of Birth</label>
+        <span>{{ profile.dob }}</span>
+    </div>
+
+    <div class="profile-row">
+        <label>Address</label>
+        <span>{{ profile.address }}</span>
+    </div>
+    {% endif %}
+
+    <a href="{% url 'profile-edit' %}" class="edit-btn">
+        Edit Profile
+    </a>
+
+</div>
+
+{% endblock %}
+

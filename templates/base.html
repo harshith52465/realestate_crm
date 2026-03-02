@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}CRM{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #f5f6f8;
+            --sidebar-bg: #ffffff;
+            --sidebar-border: #e8edf2;
+            --accent: #1d7fe2;
+            --accent-soft: #e7f2fd;
+            --text: #111827;
+            --muted: #6b7280;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+        .layout { display: flex; height: 100vh; }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
+            padding: 24px 18px;
+        }
+        .sidebar h2 {
+            color: var(--accent);
+            margin: 6px 10px 24px;
+            font-size: 22px;
+            letter-spacing: 0.5px;
+        }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li { margin-bottom: 8px; }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text);
+            text-decoration: none;
+            padding: 12px 14px;
+            border-radius: 12px;
+        }
+        .sidebar a:hover {
+            background: #f1f5f9;
+            transition: 0.2s;
+        }
+        .sidebar a.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 700;
+        }
+        .nav-icon {
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: #ffffff;
+            padding: 14px 22px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+    {% if request.user.is_staff %}
+    <div class="sidebar">
+    <h2>CRIMSON REALESTATES</h2>
+
+    <ul>
+        {% if request.user.is_staff %}
+        <li>
+            <a class="{% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
+                <span class="nav-icon">▦</span>
+                Dashboard
+            </a>
+        </li>
+        {% endif %}
+
+        {% if request.user.is_staff %}
+        <li>
+            <a class="{% if '/leads/' in request.path %}active{% endif %}" href="{% url 'lead-list' %}">
+                <span class="nav-icon">👥</span>
+                CRM
+            </a>
+        </li>
+
+        <li>
+            <a class="{% if '/tasks/' in request.path %}active{% endif %}" href="{% url 'task-list' %}">
+                <span class="nav-icon">🗂</span>
+                Task List
+            </a>
+        </li>
+
+        <li>
+            <a class="{% if '/calls/' in request.path %}active{% endif %}" href="{% url 'call-list' %}">
+                <span class="nav-icon">📞</span>
+                Call Metrics
+            </a>
+        </li>
+
+        <li>
+            <a class="{% if '/reports/' in request.path %}active{% endif %}" href="{% url 'reports-home' %}">
+                <span class="nav-icon">📊</span>
+                Reports
+            </a>
+        </li>
+        {% endif %}
+
+        <li>
+            <a class="{% if '/properties/' in request.path or request.path == '/' %}active{% endif %}" href="{% url 'property-list' %}">
+                <span class="nav-icon">🏛</span>
+                Properties
+            </a>
+        </li>
+
+        {% if request.user.is_superuser %}
+        <li>
+            <a class="{% if '/agents/' in request.path and '/agents/add/' not in request.path %}active{% endif %}" href="{% url 'agent-list' %}">
+                <span class="nav-icon">A</span>
+                Agents
+            </a>
+        </li>
+        {% endif %}
+
+        <li>
+            <a href="{% url 'logout' %}">
+                <span class="nav-icon">⎋</span>
+                Logout
+            </a>
+        </li>
+    </ul>
+</div>
+    {% endif %}
+
+
+
+    <div class="main">
+        <div class="topbar">
+            <div style="color:#555; font-size:14px;">
+                Home
+                {% if request.path == '/dashboard/' %}
+                    / Dashboard / Overview
+                {% elif '/leads/' in request.path %}
+                    / CRM
+                {% elif '/tasks/' in request.path %}
+                    / Task List
+                {% elif '/reports/' in request.path %}
+                    / Reports
+                {% elif '/profile/' in request.path %}
+                    / My Profile
+                {% elif '/properties/' in request.path or request.path == '/' %}
+                    / Properties
+                {% endif %}
+            </div>
+
+            <div>
+                {{ request.user.username }} |
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+
+

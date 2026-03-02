@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Add Property{% endblock %}
+
+{% block content %}
+<style>
+    .form-card{background:#fff;padding:25px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1);max-width:700px}
+    .form-group{margin-bottom:15px}
+    label{font-weight:bold;display:block;margin-bottom:5px}
+    input,select{width:100%;padding:10px;border-radius:6px;border:1px solid #ccc}
+    .btn{padding:10px 15px;border-radius:6px;border:none;cursor:pointer}
+    .btn-save{background:#2563eb;color:#fff}
+</style>
+
+<h2>Add Property</h2>
+
+<div class="form-card">
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+<div class="form-group">
+    <label>Title</label>
+    <input type="text" name="title" required>
+</div>
+
+<div class="form-group">
+    <label>Property Type</label>
+    <select name="property_type" required>
+    <option value="">-- Select Property Type --</option>
+    <option value="house">House</option>
+    <option value="apartment">Apartment / Flat</option>
+    <option value="villa">Villa</option>
+    <option value="building">Building</option>
+    <option value="complex">Residential Complex</option>
+    <option value="commercial">Commercial Property</option>
+    <option value="land">Land / Plot</option>
+</select>
+
+</div>
+
+<div class="form-group">
+    <label>Price</label>
+    <input type="number" name="price" required>
+</div>
+
+<div class="form-group">
+    <label>Location</label>
+    <input type="text" name="location" required>
+</div>
+
+<div class="form-group">
+    <label>Listing Type</label>
+    <select name="listing_type" required>
+        <option value="buy">Buy</option>
+        <option value="rent">Rent</option>
+        <option value="lease">Lease</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Status</label>
+    <select name="status">
+        <option value="available">Available</option>
+        <option value="sold">Sold</option>
+        <option value="hold">On Hold</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Assign Agent</label>
+    <select name="assigned_to">
+        {% for a in agents %}
+            <option value="{{ a.id }}">{{ a.username }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Main Image</label>
+    <input type="file" name="image">
+</div>
+
+<div class="form-group">
+    <label>Gallery Images (multiple)</label>
+    <input type="file" name="gallery" multiple>
+</div>
+
+
+
+<button class="btn btn-save" type="submit">Save Property</button>
+</form>
+</div>
+{% endblock %}
+
+

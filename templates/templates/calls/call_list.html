@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Calls{% endblock %}
+
+{% block content %}
+<style>
+    .page-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    th { background: #f1f5f9; font-size: 13px; text-transform: uppercase; color: #555; }
+    .add-btn { padding: 8px 14px; background: #2563eb; color: white; border-radius: 6px; text-decoration: none; }
+</style>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+    <h2>Calls</h2>
+    <a href="{% url 'call-add' %}" class="add-btn">+ Add Call</a>
+</div>
+
+<div class="page-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Lead</th>
+                <th>Type</th>
+                <th>Duration (sec)</th>
+                <th>Agent</th>
+                <th>Date</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for c in calls %}
+            <tr>
+                <td>{{ c.lead.name|default:"-" }}</td>
+                <td>{{ c.call_type|title }}</td>
+                <td>{{ c.duration_seconds|default:"-" }}</td>
+                <td>{{ c.created_by.username|default:"-" }}</td>
+                <td>{{ c.created_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ c.notes|default:"-" }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6">No calls found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+{% block title %}Properties{% endblock %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
+
+    .p99 {
+        font-family: "Manrope", sans-serif;
+        color: #0f172a;
+    }
+
+    .hero-wrap {
+        border-radius: 14px;
+        overflow: hidden;
+        background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.45)),
+            url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
+        min-height: 360px;
+        position: relative;
+        padding: 18px 22px;
+    }
+
+    .hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #f8fafc;
+    }
+
+    .brand {
+        font-size: 52px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .menu {
+        display: flex;
+        gap: 22px;
+        font-weight: 700;
+        font-size: 24px;
+    }
+
+    .hero-cta {
+        position: absolute;
+        left: 24px;
+        bottom: 130px;
+        color: #e2e8f0;
+    }
+
+    .hero-cta h1 {
+        margin: 0;
+        font-size: 40px;
+        line-height: 1.1;
+        color: #ffffff;
+    }
+
+    .hero-cta p {
+        margin: 10px 0 0;
+        font-size: 16px;
+        max-width: 700px;
+    }
+
+    .search-shell {
+        max-width: 1000px;
+        margin: -84px auto 22px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.2);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        position: relative;
+        z-index: 2;
+    }
+
+    .tab-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-bottom: 1px solid #e5e7eb;
+        background: #fff;
+    }
+
+    .tab {
+        text-decoration: none;
+        color: #334155;
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+        padding: 18px 8px;
+        border-bottom: 4px solid transparent;
+    }
+
+    .tab.active {
+        color: #0f172a;
+        border-bottom-color: #1273ea;
+        background: #f8fbff;
+    }
+
+    .search-row {
+        display: grid;
+        grid-template-columns: 1.1fr 2fr 1fr 1fr auto;
+        gap: 12px;
+        padding: 16px;
+        background: #fff;
+    }
+
+    .field {
+        border: 1px solid #d3dbe6;
+        border-radius: 10px;
+        padding: 12px 12px;
+        font-size: 14px;
+        color: #0f172a;
+        background: #fff;
+        width: 100%;
+    }
+
+    .field:focus {
+        outline: none;
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(18, 115, 234, 0.12);
+    }
+
+    .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .btn-primary {
+        background: #1273ea;
+        color: #fff;
+    }
+
+    .btn-outline {
+        border: 1px solid #dbe3ee;
+        background: #fff;
+        color: #0f172a;
+    }
+
+    .btn-disabled {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .top-row {
+        margin: 10px 0 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .muted {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 18px;
+    }
+
+    .card {
+        border: 1px solid #dbe3ee;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    .thumb {
+        position: relative;
+        height: 190px;
+        background: #e2e8f0;
+    }
+
+    .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(15, 23, 42, 0.84);
+        color: #fff;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .price {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 9px;
+        padding: 6px 10px;
+        font-size: 14px;
+        color: #0f766e;
+        font-weight: 800;
+    }
+
+    .body {
+        padding: 14px;
+    }
+
+    .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .title {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .type-pill {
+        background: #e8fffb;
+        color: #0f766e;
+        border: 1px solid #9be7d9;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 4px 8px;
+    }
+
+    .loc {
+        margin: 7px 0 12px;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .meta {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .meta-item {
+        border: 1px solid #e7edf5;
+        border-radius: 9px;
+        text-align: center;
+        font-size: 12px;
+        color: #334155;
+        padding: 6px;
+        background: #f8fbff;
+    }
+
+    .meta-item b {
+        display: block;
+        font-size: 13px;
+        color: #0f172a;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .actions .btn {
+        flex: 1;
+        min-width: 88px;
+        font-size: 13px;
+        padding: 9px;
+    }
+
+    .company-footer {
+        margin-top: 24px;
+        background: #06090f;
+        border: 1px solid #1f2937;
+        border-radius: 14px;
+        padding: 18px;
+        color: #d6deea;
+    }
+
+    .company-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr;
+        gap: 14px;
+    }
+
+    .company-footer h4 {
+        margin: 0 0 8px;
+        color: #fff;
+        font-size: 15px;
+    }
+
+    .company-footer p {
+        margin: 4px 0;
+        font-size: 13px;
+    }
+
+    .company-copy {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #253041;
+        font-size: 12px;
+        color: #9fb1c8;
+    }
+
+    @media (max-width: 1200px) {
+        .menu { display: none; }
+        .tab-row { grid-template-columns: repeat(3, 1fr); }
+        .search-row { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    @media (max-width: 760px) {
+        .hero-wrap { min-height: 270px; }
+        .brand { font-size: 38px; }
+        .hero-cta { bottom: 120px; }
+        .hero-cta h1 { font-size: 28px; }
+        .tab { font-size: 16px; padding: 13px 6px; }
+        .search-row { grid-template-columns: 1fr; }
+        .company-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="p99">
+    <section class="hero-wrap">
+        <div class="hero-top">
+            <div class="brand">Crimson</div>
+            <div class="menu">
+                <span>For Buyers</span>
+                <span>For Tenants</span>
+                <span>For Owners</span>
+                <span>For Dealers / Builders</span>
+            </div>
+        </div>
+        <div class="hero-cta">
+            <h1>A Landmark Of Elevated Living In Prime Cities</h1>
+            <p>Browse trusted property listings for buy, rent and lease with direct request support.</p>
+        </div>
+    </section>
+
+    <section class="search-shell">
+        <div class="tab-row">
+            <a class="tab {% if selected_listing_type == 'buy' or not selected_listing_type %}active{% endif %}" href="{% url 'property-list' %}?listing_type=buy">Buy</a>
+            <a class="tab {% if selected_listing_type == 'rent' %}active{% endif %}" href="{% url 'property-list' %}?listing_type=rent">Rent</a>
+            <a class="tab {% if selected_listing_type == 'lease' %}active{% endif %}" href="{% url 'property-list' %}?listing_type=lease">Lease</a>
+            <span class="tab">Commercial</span>
+            <span class="tab">Plots/Land</span>
+        </div>
+
+        <form method="get" class="search-row">
+            <select class="field" name="type">
+                <option value="">All Residential</option>
+                {% for key, label in property_types %}
+                <option value="{{ key }}" {% if selected_type == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            <input class="field" type="text" name="q" placeholder='Search "City / Property"' value="{{ selected_q }}">
+
+            <input class="field" type="number" name="min_price" min="0" placeholder="Min Price" value="{{ selected_min_price }}">
+            <input class="field" type="number" name="max_price" min="0" placeholder="Max Price" value="{{ selected_max_price }}">
+
+            <select class="field" name="status">
+                <option value="">Any Status</option>
+                {% for key, label in status_choices %}
+                <option value="{{ key }}" {% if selected_status == key %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+
+            {% if selected_listing_type %}
+            <input type="hidden" name="listing_type" value="{{ selected_listing_type }}">
+            {% endif %}
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+    </section>
+
+    <div class="top-row">
+        <div class="muted">Showing {{ total_properties }} properties</div>
+        {% if request.user.is_staff %}
+        <a href="{% url 'property-add' %}" class="btn btn-primary">Add Property</a>
+        {% endif %}
+    </div>
+
+    <div class="grid">
+        {% for p in properties %}
+        <article class="card">
+            <div class="thumb">
+                {% if p.image %}
+                <img src="{{ p.image.url }}" alt="{{ p.title }}">
+                {% else %}
+                <img src="https://via.placeholder.com/900x500?text=Property" alt="{{ p.title }}">
+                {% endif %}
+                <span class="badge">{{ p.listing_type|title }} | {{ p.status|title }}</span>
+                <span class="price">INR {{ p.price }}</span>
+            </div>
+
+            <div class="body">
+                <div class="title-row">
+                    <h3 class="title">{{ p.title }}</h3>
+                    <span class="type-pill">{{ p.property_type|title }}</span>
+                </div>
+                <p class="loc">{{ p.location }}</p>
+
+                <div class="meta">
+                    <div class="meta-item"><b>{{ p.bedrooms|default:"-" }}</b>Bedrooms</div>
+                    <div class="meta-item"><b>{{ p.bathrooms|default:"-" }}</b>Bathrooms</div>
+                    <div class="meta-item"><b>{{ p.area|default:"-" }}</b>Sqft</div>
+                </div>
+
+                <div class="actions">
+                    <a href="{% url 'property-detail' p.id %}" class="btn btn-outline">View</a>
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'property-enquiry' p.id %}" class="btn btn-primary">Request</a>
+                    {% elif p.id in requested_property_ids %}
+                    <span class="btn btn-outline btn-disabled">Requested</span>
+                    {% else %}
+                    <a href="{% url 'property-enquiry' p.id %}" class="btn btn-primary">Request</a>
+                    {% endif %}
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'property-edit' p.id %}" class="btn btn-outline">Edit</a>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <article class="card">
+            <div class="body">
+                <h3 class="title">No Properties Found</h3>
+                <p class="loc">Try changing your filters.</p>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+
+    <section class="company-footer">
+        <div class="company-grid">
+            <div>
+                <h4>Crimson Realestates</h4>
+                <p>Trusted real-estate platform for buying, renting, and leasing properties.</p>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <p>Phone: +91 98765 43210</p>
+                <p>Email: support@crimsonrealestates.com</p>
+            </div>
+            <div>
+                <h4>Office</h4>
+                <p>Skyline Tech Park, 4th Floor</p>
+                <p>Bengaluru, Karnataka</p>
+            </div>
+        </div>
+        <div class="company-copy">Copyright 2026 Crimson Realestates. All rights reserved.</div>
+    </section>
+</div>
+{% endblock %}

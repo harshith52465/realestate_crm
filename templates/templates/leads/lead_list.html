@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Leads{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #f1f5f9;
+        font-size: 13px;
+        text-transform: uppercase;
+        color: #555;
+    }
+
+    tr:hover {
+        background: #f9fafb;
+    }
+
+    .add-btn {
+        padding: 8px 14px;
+        background: #2563eb;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+
+    .status-fresh {
+        color: green;
+        font-weight: 600;
+    }
+
+    .status-untouched {
+        color: gray;
+    }
+
+    .muted {
+        color: #999;
+    }
+</style>
+
+<!-- PAGE HEADER -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+    <h2>CRM – Leads</h2>
+    <a href="{% url 'lead-add' %}" class="add-btn">+ Add Lead</a>
+</div>
+
+<div class="page-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>email</th>
+                <th>address</th>
+                <th>Status</th>
+                <th>Total Enquiries</th>
+                <th>Assigned To</th>
+                <th>property intrested</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for row in grouped %}
+            {% with lead=row.lead %}
+            <tr>
+    <td>{{ lead.name }}</td>
+    <td>{{ lead.phone|default:"Not Provided" }}</td>
+    <td>{{ lead.email|default:"Not Provided" }}</td>
+    <td>{{ lead.address|default:"Not Provided" }}</td>
+
+    <td>
+        {% if request.user.is_superuser or lead.assigned_to == request.user %}
+        <form method="post" action="{% url 'lead-status' lead.id %}">
+            {% csrf_token %}
+            <select name="status">
+                <option value="fresh" {% if lead.status == "fresh" %}selected{% endif %}>Fresh</option>
+                <option value="returning" {% if lead.status == "returning" %}selected{% endif %}>Returning</option>
+                <option value="untouched" {% if lead.status == "untouched" %}selected{% endif %}>Untouched</option>
+                <option value="closed" {% if lead.status == "closed" %}selected{% endif %}>Closed</option>
+            </select>
+            <button type="submit" class="add-btn" style="padding:4px 8px;margin-left:6px;">Save</button>
+        </form>
+        {% else %}
+        {{ lead.status|title }}
+        {% endif %}
+    </td>
+
+    <td>{{ row.count }}</td>
+
+    <td>
+        {{ lead.assigned_to.username|default:"Unassigned" }}
+    </td>
+
+    <td>
+        {% if row.properties %}
+            {{ row.properties|join:", " }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+</tr>
+            {% endwith %}
+
+        {% empty %}
+            <tr>
+                <td colspan="4">No leads found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

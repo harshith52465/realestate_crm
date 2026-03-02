@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}Agent Details{% endblock %}
+
+{% block content %}
+<style>
+    .page-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 18px;
+    }
+    .details-card {
+        background: linear-gradient(135deg, #0f172a 0%, #0f766e 100%);
+        border-radius: 14px;
+        padding: 16px;
+        color: #e6f4f1;
+        margin-bottom: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .meta {
+        color: #d7efe9;
+        font-size: 14px;
+        margin: 2px 0;
+    }
+    .agent-title {
+        margin: 0 0 8px;
+        font-size: 28px;
+        color: #ffffff;
+    }
+    .pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        font-weight: 700;
+    }
+    .btn {
+        display: inline-block;
+        background: #ffffff;
+        color: #0f172a;
+        border-radius: 8px;
+        padding: 7px 12px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+    .chip-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 8px 0 12px;
+    }
+    .chip {
+        background: #ecfeff;
+        color: #0f766e;
+        border: 1px solid #99f6e4;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+    }
+    th, td {
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        padding: 9px 10px;
+        font-size: 14px;
+    }
+    th {
+        background: #f3f4f6;
+    }
+</style>
+
+<div class="page-card">
+    <div class="details-card">
+    <div class="head">
+        <div>
+            <h2 class="agent-title">{{ agent.profile.full_name|default:agent.username }}</h2>
+            <div class="meta">Username: {{ agent.username }}</div>
+            <div class="meta">Email: {{ agent.email|default:"Not provided" }}</div>
+            <div class="meta">Phone: {{ agent.profile.phone|default:"Not provided" }}</div>
+            <div class="meta">City: {{ agent.profile.city|default:"Not provided" }}</div>
+            <div class="meta">Specialization: {{ agent.profile.specialization|default:"Not provided" }}</div>
+        </div>
+        <div>
+            <span class="pill">Leads: {{ agent.total_leads }}</span>
+            <span class="pill" style="margin-left:6px;">Properties: {{ agent.property_set.all|length }}</span>
+            <div>
+                <a class="btn" href="{% url 'agent-assign-property' agent.id %}">Assign Property</a>
+                <a class="btn" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.35);" href="{% url 'agent-list' %}">Back</a>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <h3 style="margin:14px 0 6px;">Assigned Properties</h3>
+    <div class="chip-wrap">
+        {% for p in agent.property_set.all %}
+        <a class="chip" href="{% url 'property-detail' p.id %}">{{ p.title }}</a>
+        {% empty %}
+        <span class="meta">No properties assigned.</span>
+        {% endfor %}
+    </div>
+
+    <h3 style="margin:14px 0 6px;">Assigned Leads</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Lead</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Property</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lead in agent.leads.all %}
+            <tr>
+                <td>{{ lead.name }}</td>
+                <td>{{ lead.phone|default:"Not provided" }}</td>
+                <td>{{ lead.status|title }}</td>
+                <td>{{ lead.property.title|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No leads assigned.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}Edit Property{% endblock %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+
+    .edit-wrap {
+        font-family: "Manrope", sans-serif;
+        max-width: 980px;
+    }
+
+    .page-title {
+        margin: 0 0 6px;
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .page-sub {
+        margin: 0 0 18px;
+        color: #64748b;
+    }
+
+    .card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        padding: 18px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .full {
+        grid-column: 1 / -1;
+    }
+
+    .field label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 13px;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        border: 1px solid #cfd8e3;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+        outline: none;
+        background: #fff;
+    }
+
+    .field input:focus,
+    .field select:focus {
+        border-color: #0f766e;
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    }
+
+    .preview {
+        margin-top: 6px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        max-width: 280px;
+    }
+
+    .preview img {
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-save {
+        background: #0f766e;
+        color: #fff;
+    }
+
+    .btn-cancel {
+        background: #fff;
+        color: #0f172a;
+        border: 1px solid #cfd8e3;
+    }
+
+    @media (max-width: 760px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="edit-wrap">
+    <h2 class="page-title">Edit Property</h2>
+    <p class="page-sub">Update listing details, media, and availability status.</p>
+
+    <div class="card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="grid">
+                <div class="field full">
+                    <label>Title</label>
+                    <input type="text" name="title" value="{{ property.title }}" required>
+                </div>
+
+                <div class="field">
+                    <label>Property Type</label>
+                    <select name="property_type">
+                        <option value="house" {% if property.property_type == "house" %}selected{% endif %}>House</option>
+                        <option value="apartment" {% if property.property_type == "apartment" %}selected{% endif %}>Apartment / Flat</option>
+                        <option value="villa" {% if property.property_type == "villa" %}selected{% endif %}>Villa</option>
+                        <option value="building" {% if property.property_type == "building" %}selected{% endif %}>Building</option>
+                        <option value="complex" {% if property.property_type == "complex" %}selected{% endif %}>Residential Complex</option>
+                        <option value="commercial" {% if property.property_type == "commercial" %}selected{% endif %}>Commercial Property</option>
+                        <option value="land" {% if property.property_type == "land" %}selected{% endif %}>Land / Plot</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Listing Type</label>
+                    <select name="listing_type">
+                        <option value="buy" {% if property.listing_type == "buy" %}selected{% endif %}>Buy</option>
+                        <option value="rent" {% if property.listing_type == "rent" %}selected{% endif %}>Rent</option>
+                        <option value="lease" {% if property.listing_type == "lease" %}selected{% endif %}>Lease</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="available" {% if property.status == "available" %}selected{% endif %}>Available</option>
+                        <option value="sold" {% if property.status == "sold" %}selected{% endif %}>Sold</option>
+                        <option value="hold" {% if property.status == "hold" %}selected{% endif %}>On Hold</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Price</label>
+                    <input type="number" name="price" value="{{ property.price }}" min="0">
+                </div>
+
+                <div class="field">
+                    <label>Area (sqft)</label>
+                    <input type="number" name="area" value="{{ property.area }}" min="0">
+                </div>
+
+                <div class="field">
+                    <label>Bedrooms</label>
+                    <input type="number" name="bedrooms" value="{{ property.bedrooms }}" min="0">
+                </div>
+
+                <div class="field">
+                    <label>Bathrooms</label>
+                    <input type="number" name="bathrooms" value="{{ property.bathrooms }}" min="0">
+                </div>
+
+                <div class="field full">
+                    <label>Location</label>
+                    <input type="text" name="location" value="{{ property.location }}">
+                </div>
+
+                <div class="field">
+                    <label>Main Image</label>
+                    <input type="file" name="image">
+                    {% if property.image %}
+                    <div class="preview">
+                        <img src="{{ property.image.url }}" alt="Current property image">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    <label>Add Gallery Images</label>
+                    <input type="file" name="gallery" multiple>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-save" type="submit">Update Property</button>
+                <a class="btn btn-cancel" href="{% url 'property-detail' property.id %}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

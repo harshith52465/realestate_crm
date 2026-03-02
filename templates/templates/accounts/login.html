@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue: #0d9488;
+            --text: #0f172a;
+            --muted: #6b7280;
+            --light: #f3f4f6;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: "Nunito", sans-serif;
+            background: #ffffff;
+            margin: 0;
+        }
+        .page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+            padding: 40px 60px;
+        }
+        .panel {
+            max-width: 420px;
+            margin-left: auto;
+        }
+        .title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 22px;
+        }
+        .social-btn {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+        }
+        .social-btn.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        .social-icon {
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+        .g { background: #f3f4f6; color: #ef4444; }
+        .f { background: #e8f0ff; color: #2563eb; }
+
+        .input-group {
+            background: #f5f6f8;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-top: 12px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+        .input-group input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            outline: none;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 14px 0 18px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .login-btn {
+            width: 100%;
+            background: var(--blue);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .signup {
+            text-align: center;
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .signup a { color: var(--blue); text-decoration: none; }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-card {
+            width: 540px;
+            height: 520px;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+            background: url("https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1400&auto=format&fit=crop") center/cover no-repeat;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+        }
+        .hero-tag {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: rgba(255,255,255,0.8);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #111827;
+            font-weight: 600;
+        }
+        .hero-cut {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(255,255,255,1) 0 120px, rgba(255,255,255,0) 121px),
+                radial-gradient(circle at 100% 0%, rgba(255,255,255,1) 0 90px, rgba(255,255,255,0) 91px),
+                radial-gradient(circle at 100% 100%, rgba(255,255,255,1) 0 120px, rgba(255,255,255,0) 121px);
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+
+        @media (max-width: 1024px) {
+            .page { grid-template-columns: 1fr; padding: 30px; }
+            .panel { margin: 0 auto; }
+            .hero { order: -1; }
+            .hero-card { width: 100%; height: 360px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+    <div class="panel">
+        <div style="font-weight:700;color:#111827;margin-bottom:8px;">Crimson Realestates</div>
+        <div class="title">Wellcome Back</div>
+        <div class="subtitle">Let's login to grab amazing deal</div>
+
+        {% if error %}
+        <div style="color:#b91c1c; margin:8px 0;">{{ error }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <label>Email</label>
+                <input type="text" name="username" placeholder="username or email" value="{{ form.username|default:'' }}">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="********">
+            </div>
+
+            <div class="row">
+                <label><input type="checkbox" name="remember"> Remember me</label>
+                <a href="#" style="color:var(--muted); text-decoration:none;">Forgot password?</a>
+            </div>
+
+            <button class="login-btn" type="submit">Login</button>
+        </form>
+
+        <div class="signup">
+            Don't have an account? <a href="{% url 'register' %}">Sing Up.</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="hero-card">
+            <div class="hero-tag">Browse thousands of properties to buy, sell, or rent with trusted agents.</div>
+            <div class="hero-cut"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+
